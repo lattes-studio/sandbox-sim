@@ -7,6 +7,8 @@ player.CharacterAdded.Wait();
 const character = player.Character;
 const mouse = player.GetMouse();
 
+let model: Model;
+let hitBox: Part;
 let object: Part | UnionOperation;
 let placed: Folder;
 let plot: Model;
@@ -34,9 +36,9 @@ functions!!
 // changes the object color based of hits
 function coloredHit() {
 	if (hit) {
-		object.Color = Color3.fromRGB(255, 0, 0);
+		hitBox.Color = Color3.fromRGB(255, 0, 0);
 	} else {
-		object.Color = Color3.fromRGB(0, 255, 0);
+		hitBox.Color = Color3.fromRGB(0, 255, 0);
 	}
 }
 // returns if the object is out of bounds
@@ -61,7 +63,7 @@ function bounds() {
 function isHit() {
 	hit = false;
 	object.GetTouchingParts().forEach((part) => {
-		if (part.IsDescendantOf(object) || part.Name === "base") return;
+		if (part.IsDescendantOf(model) || part.Name === "base") return;
 		hit = true;
 		return;
 	});
@@ -95,11 +97,15 @@ function getPos() {
 // sets a objects position based on grid value!
 function setPos() {
 	getPos();
-	if (object.Parent !== placed) return;
-	object.PivotTo(
-		object.CFrame.Lerp(new CFrame(posX, posY, posZ).mul(CFrame.fromEulerAnglesXYZ(0, math.rad(rot), 0)), speed),
+	if (model.Parent !== placed) return;
+	model.PivotTo(
+		new CFrame(model.WorldPivot.X, model.WorldPivot.Y, model.WorldPivot.Z).Lerp(
+			new CFrame(posX, posY, posZ).mul(CFrame.fromEulerAnglesXYZ(0, math.rad(rot), 0)),
+			speed,
+		),
 	);
-	object.Position = bounds();
+	const e = bounds();
+	model.PivotTo(new CFrame(e.X, e.Y, e.Z));
 	isHit();
 }
 // rotation function
@@ -113,18 +119,17 @@ function killPlace() {
 	RunService.UnbindFromRenderStep("Input");
 	ContextActionService.UnbindAction("Rotate");
 	if (texture) texture.Destroy();
-	if (object) object.Destroy();
+	if (model) model.Destroy();
 }
 // on[rotateKey]Pressed AKA runs when player enter build mode!  (itemName = name of item to place | placed = folder of placed items on that plot | plot = the plot to build on | stacks = if the item can be built ontop of it)
 function activate() {
-	object = items.FindFirstChild(itemName)?.Clone() as Part | UnionOperation;
+	editItem(itemName);
 	if (!stacks) {
 		mouse.TargetFilter = placed;
 	} else {
-		mouse.TargetFilter = object;
+		mouse.TargetFilter = model;
 	}
 	renderGrid();
-	object.Parent = placed;
 	wait();
 	speed = 0.3;
 	RunService.BindToRenderStep("Input", Enum.RenderPriority.Input.Value, setPos);
@@ -149,6 +154,19 @@ export function place() {
 
 export function editItem(name: string) {
 	itemName = name;
+	object = items.FindFirstChild(itemName)?.Clone() as Part | UnionOperation;
+	model = new Instance("Model");
+	object.Parent = model;
+	object.Transparency = 0.5;
+	hitBox = new Instance("Part");
+	hitBox.Anchored = true;
+	hitBox.Size = object.Size.add(new Vector3(0.05, 0.05, 0.05));
+	hitBox.Transparency = 0.5;
+	hitBox.BrickColor = BrickColor.Red();
+	hitBox.CanCollide = false;
+	hitBox.Position = object.Position;
+	hitBox.Parent = model;
+	model.Parent = placed;
 }
 
 // setup function!   (gridSize = placement grid size | items = the folder with all items to clone from | rotateKey = Enum.KeyCode.Name for rotating items | killerKey = Enum.KeyCode.Name for exiting buildmode)
@@ -161,7 +179,8 @@ export function constructorE(
 	plot1: Model,
 	itemName1: string,
 ) {
-	editItem(itemName1);
+	stacks = true;
+	itemName = itemName1;
 	gridSize = gridSize1;
 	placed = placed1;
 	plot = plot1;

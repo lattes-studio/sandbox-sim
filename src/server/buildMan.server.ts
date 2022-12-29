@@ -9,7 +9,7 @@ function isHit(object: Part | UnionOperation) {
 	let hit = false;
 	object.GetTouchingParts().forEach((part) => {
 		if (part.IsDescendantOf(object) || part.Name === "base") return;
-		return (hit = true);
+		hit = true;
 	});
 	return hit;
 }
@@ -20,12 +20,12 @@ ReplicatedStorage.signals.Place.OnServerInvoke = function (player, name1, placed
 	const position = position1 as CFrame;
 	const gridSize = gridSize1 as number;
 	const item = ReplicatedStorage.models.FindFirstChild(name)?.Clone() as Part | UnionOperation;
-	if (isHit(item)) return;
+	if (isHit(item)) return item.Destroy();
 	item.CanCollide = true;
 	item.Transparency = 0;
 	item.PivotTo(position);
 	item.PivotTo(new CFrame(snap(position.X, gridSize), position.Y, snap(position.Z, gridSize)));
-	if (!item || !plot) return;
+	if (!item || !plot) return item.Destroy();
 	const plot1 = plot as Folder;
 	const owner = plot1.FindFirstChild("owner") as StringValue;
 	// if (owner.Value !== player.Name) return;
