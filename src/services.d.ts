@@ -2,6 +2,8 @@ interface ReplicatedStorage extends Instance {
 	models: Folder;
 	signals: Folder & {
 		Place: RemoteFunction;
+		RequestPlot: RemoteFunction;
+		GivePlot: RemoteFunction;
 	};
 }
 
