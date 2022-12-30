@@ -98,14 +98,12 @@ function getPos() {
 function setPos() {
 	getPos();
 	if (model.Parent !== placed) return;
+	print(model.WorldPivot.Rotation);
 	model.PivotTo(
-		new CFrame(model.WorldPivot.X, model.WorldPivot.Y, model.WorldPivot.Z).Lerp(
-			new CFrame(posX, posY, posZ).mul(CFrame.fromEulerAnglesXYZ(0, math.rad(rot), 0)),
-			speed,
-		),
+		model.WorldPivot.Lerp(new CFrame(posX, posY, posZ).mul(CFrame.fromEulerAnglesXYZ(0, math.rad(rot), 0)), speed),
 	);
 	const e = bounds();
-	model.PivotTo(new CFrame(e.X, e.Y, e.Z));
+	model.MoveTo(new Vector3(e.X, e.Y, e.Z));
 	isHit();
 }
 // rotation function
@@ -149,7 +147,7 @@ function toggleActive(actionName: string, inputState: Enum.UserInputState, input
 
 export function place() {
 	if (!object || hit || !active) return;
-	ReplicatedStorage.signals.Place.InvokeServer(object.Name, placed, object.CFrame, plot, gridSize);
+	ReplicatedStorage.signals.Place.InvokeServer(object.Name, placed, model.WorldPivot, plot, gridSize);
 }
 
 export function editItem(name: string) {
@@ -157,7 +155,6 @@ export function editItem(name: string) {
 	object = items.FindFirstChild(itemName)?.Clone() as Part | UnionOperation;
 	model = new Instance("Model");
 	object.Parent = model;
-	object.Transparency = 0.5;
 	hitBox = new Instance("Part");
 	hitBox.Anchored = true;
 	hitBox.Size = object.Size.add(new Vector3(0.05, 0.05, 0.05));

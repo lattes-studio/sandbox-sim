@@ -14,7 +14,7 @@ const plot = ReplicatedStorage.signals.RequestPlot.InvokeServer() as Model;
 const base = plot.FindFirstChild("base") as Part;
 if (plot.IsA("Player")) Players.LocalPlayer.Kick("PLOT_ERROR");
 const items = plot.FindFirstChild("items") as Folder;
-constructorE(1, ReplicatedStorage.models, Enum.KeyCode.R, Enum.KeyCode.B, items, plot, "block");
+constructorE(1, ReplicatedStorage.models, Enum.KeyCode.R, Enum.KeyCode.B, items, plot, "Belt");
 
 const mouse = Players.LocalPlayer.GetMouse();
 
