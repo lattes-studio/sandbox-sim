@@ -32,6 +32,7 @@ export function requestPlot(player: Player) {
 }
 
 export function takePlot(player: Player) {
+	wait(0.1);
 	Workspace.plots.GetChildren().forEach((plot) => {
 		const owner = plot.FindFirstChild("owner") as StringValue;
 		if (owner.Value === player.Name) {

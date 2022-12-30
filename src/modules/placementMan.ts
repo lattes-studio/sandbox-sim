@@ -98,7 +98,6 @@ function getPos() {
 function setPos() {
 	getPos();
 	if (model.Parent !== placed) return;
-	print(model.WorldPivot.Rotation);
 	model.PivotTo(
 		model.WorldPivot.Lerp(new CFrame(posX, posY, posZ).mul(CFrame.fromEulerAnglesXYZ(0, math.rad(rot), 0)), speed),
 	);
@@ -146,7 +145,13 @@ function toggleActive(actionName: string, inputState: Enum.UserInputState, input
 }
 
 export function place() {
-	if (!object || hit || !active) return;
+	if (
+		!object ||
+		hit ||
+		!active ||
+		(math.abs(math.round(object.Rotation.Y)) !== 90 && math.abs(math.round(object.Rotation.Y)) !== 0)
+	)
+		return;
 	ReplicatedStorage.signals.Place.InvokeServer(object.Name, placed, model.WorldPivot, plot, gridSize);
 }
 
