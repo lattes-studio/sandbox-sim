@@ -1,5 +1,5 @@
 {
-	"name": "roblox-ts-game",
+"name": "roblox-ts-game",
 	"globIgnorePaths": [
 		"**/package.json",
 		"**/tsconfig.json"
@@ -8,7 +8,7 @@
 		"$className": "DataModel",
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
-			"TS": {
+			"scripts": {
 				"$path": "out/server"
 			}
 		},
@@ -23,15 +23,15 @@
 					}
 				}
 			},
-			"TS": {
-				"$path": "out/shared"
+			"modules": {
+				"$path": "out/modules"
 			}
 		},
 		"StarterPlayer": {
 			"$className": "StarterPlayer",
 			"StarterPlayerScripts": {
 				"$className": "StarterPlayerScripts",
-				"TS": {
+				"scripts": {
 					"$path": "out/client"
 				}
 			}
